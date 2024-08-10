@@ -1,0 +1,12 @@
+{% extends 'shop/base.html' %}
+
+{% block css %}
+{% endblock css %}
+
+{% block title %}Dashboard{% endblock title %}
+{% block body %}
+
+<h1>Dashboard : {{ request.user.username }}</h1>
+<a href="{% url 'logout' %}" class="btn btn-dark">Logout</a>
+
+{% endblock body %}
