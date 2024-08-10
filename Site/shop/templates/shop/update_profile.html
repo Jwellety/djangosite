@@ -1,0 +1,164 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Update Profile{% endblock title %}
+
+{% block css %}
+<style>
+    body {
+        background-color: #f7f8fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    h1 {
+        color: #333333;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333333;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        color: #ffffff;
+        display: inline-block;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        opacity: 0.9;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-3px);
+        opacity: 0.9;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock css %}
+
+{% block body %}
+<div class="container">
+    <h1>Update Your Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="first_name">First Name *</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user_profile.first_name }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name *</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user_profile.last_name }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" value="{{ user_profile.email_address }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="shop_name">Shop Name</label>
+            <input type="text" id="shop_name" name="shop_name" value="{{ user_profile.shop_name }}">
+        </div>
+
+        <div class="form-group">
+            <label for="role_at_shop">Role at Shop *</label>
+            <input type="text" id="role_at_shop" name="role_at_shop" value="{{ user_profile.role_at_shop }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="owner_of_shop">Owner of the Shop</label>
+            <input type="text" id="owner_of_shop" name="owner_of_shop" value="{{ user_profile.owner_of_shop }}">
+        </div>
+
+        <div class="form-group">
+            <label for="phone_number">Phone Number *</label>
+            <input type="text" id="phone_number" name="phone_number" value="{{ user_profile.phone_number }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="shop_description">Shop Description</label>
+            <textarea id="shop_description" name="shop_description"
+                rows="4">{{ user_profile.shop_description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="date_of_joining">Date of Joining *</label>
+            <input type="text" id="date_of_joining" name="date_of_joining" value="{{ user_profile.date_of_joining }}"
+                readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="subscription_detail">Subscription Detail *</label>
+            <input type="text" id="subscription_detail" name="subscription_detail"
+                value="{{ user_profile.subscription_detail }}" required>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock body %}

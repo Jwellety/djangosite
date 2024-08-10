@@ -1,0 +1,170 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Edit Model{% endblock title %}
+
+{% block css %}
+<style>
+    body {
+        background-color: #f7f8fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    h1 {
+        color: #333333;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 16px;
+        color: #333333;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group textarea {
+        height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-group input[type="file"] {
+        display: none;
+    }
+
+    .form-group .file-upload-wrapper {
+        position: relative;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        padding: 12px;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .form-group .file-upload-wrapper:hover {
+        border-color: #007bff;
+    }
+
+    .form-group .file-upload-wrapper .file-upload-text {
+        color: #007bff;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .form-group .file-upload-wrapper .file-select-btn {
+        display: inline-block;
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .form-group .file-upload-wrapper .file-select-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        color: #ffffff;
+        display: inline-block;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+{% endblock css %}
+
+{% block body %}
+<div class="container">
+    <h1>Edit 3D Model</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.model_id.id_for_label }}">Model ID *</label>
+            <input type="text" name="model_id" id="{{ form.model_id.id_for_label }}" value="{{ form.model_id.value }}"
+                class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.category.id_for_label }}">Category *</label>
+            <input type="text" name="category" id="{{ form.category.id_for_label }}" value="{{ form.category.value }}"
+                class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description *</label>
+            <textarea name="description" id="{{ form.description.id_for_label }}"
+                class="form-control">{{ form.description.value }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.model_file.id_for_label }}">Model File (OBJ) *</label>
+            <div class="file-upload-wrapper">
+                <input type="file" name="model_file" id="{{ form.model_file.id_for_label }}">
+                <label for="{{ form.model_file.id_for_label }}" class="file-upload-text">Choose file</label>
+                <div class="file-select-btn">Select File</div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock body %}

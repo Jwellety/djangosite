@@ -1,12 +1,279 @@
 {% extends 'shop/base.html' %}
 
+{% block title %}Dashboard{% endblock title %}
+
 {% block css %}
+<style>
+    body {
+        background-color: #f7f8fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    h1,
+    h2 {
+        color: #333333;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .section {
+        margin-bottom: 60px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+        font-weight: 600;
+    }
+
+    tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        color: #ffffff;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-dark {
+        background-color: #343a40;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        opacity: 0.9;
+    }
+
+    .model-preview {
+        width: 150px;
+        height: 150px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Search box styling */
+    .search-box {
+        margin-bottom: 20px;
+        text-align: right;
+    }
+
+    .search-box input {
+        width: 350px;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    /* User info styling */
+    .user-info {
+        font-size: 18px;
+        margin-bottom: 30px;
+        background-color: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info p {
+        margin: 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-weight: 500;
+    }
+
+    .user-info p strong {
+        color: #007bff;
+    }
+
+    .user-info p:last-child {
+        border-bottom: none;
+    }
+</style>
 {% endblock css %}
 
-{% block title %}Dashboard{% endblock title %}
 {% block body %}
+<div class="container">
+    <h1>Welcome, {{ request.user.username }}</h1>
 
-<h1>Dashboard : {{ request.user.username }}</h1>
-<a href="{% url 'logout' %}" class="btn btn-dark">Logout</a>
+    <!-- User Profile Section -->
+    <div class="section profile-details user-info">
+        <h2>User Details</h2>
+        <p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
+        <p><strong>Email Address:</strong> {{ user_profile.email_address }}</p>
+        <p><strong>Shop Name:</strong> {{ user_profile.shop_name }}</p>
+        <p><strong>Subscription Detail:</strong> {{ user_profile.subscription_detail }}</p>
+        <p><strong>Date of Joining:</strong> {{ user_profile.date_of_joining }}</p>
+        <a href="{% url 'update_profile' %}" class="btn btn-primary">Update Profile</a>
+    </div>
 
+    <!-- 3D Models Section -->
+    <div class="section models-section">
+        <h2>Your 3D Models</h2>
+        <a href="{% url 'add_model' %}" class="btn btn-success mb-3">Add 3D Model</a>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="modelSearch" placeholder="Search 3D Models..." onkeyup="filterModels()">
+        </div>
+
+        <table id="modelsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Preview</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+                    <td>{{ model.model_id }}</td>
+                    <td>{{ model.category }}</td>
+                    <td>{{ model.description }}</td>
+                    <td>
+                        <div id="model-preview-{{ model.model_id }}" class="model-preview"></div>
+                        <script>
+                            load3DModel('{{ model.file.url }}', 'model-preview-{{ model.model_id }}');
+                        </script>
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_model' model.model_id %}" class="btn btn-secondary">Edit</a>
+                        <form method="post" action="{% url 'delete_model' model.model_id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{% url 'logout' %}" class="btn btn-dark mt-3">Logout</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/OrbitControls.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/OBJLoader.min.js"></script>
+<script>
+    function load3DModel(fileUrl, containerId) {
+        const container = document.getElementById(containerId);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+
+        const light = new THREE.AmbientLight(0x404040);
+        scene.add(light);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        scene.add(directionalLight);
+
+        const loader = new THREE.OBJLoader();
+        loader.load(fileUrl, function (object) {
+            scene.add(object);
+            object.position.y = -5;
+        });
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+
+    function filterModels() {
+        const input = document.getElementById('modelSearch');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('modelsTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length - 1; j++) {
+                if (cells[j]) {
+                    if (cells[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            rows[i].style.display = found ? '' : 'none';
+        }
+    }
+</script>
 {% endblock body %}

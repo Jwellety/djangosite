@@ -1,0 +1,198 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Add 3D Model{% endblock title %}
+
+{% block css %}
+<style>
+    body {
+        background-color: #f7f8fa;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    h1,
+    h2 {
+        color: #333333;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 16px;
+        color: #333333;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="file"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input[type="file"] {
+        padding: 8px;
+    }
+
+    .form-group textarea {
+        height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="file"]:focus,
+    .form-group textarea:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+        color: #ffffff;
+        display: inline-block;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .file-drop-area {
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        color: #007bff;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .file-drop-area.hover {
+        border-color: #0056b3;
+        color: #0056b3;
+    }
+
+    .file-drop-area input[type="file"] {
+        display: none;
+    }
+
+    .file-drop-area .file-select-btn {
+        margin-top: 10px;
+        display: inline-block;
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+</style>
+{% endblock css %}
+
+{% block body %}
+<div class="container">
+    <h1>Add 3D Model</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="model_id">Model ID *</label>
+            <input type="text" id="model_id" name="model_id" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category *</label>
+            <input type="text" id="category" name="category" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" required></textarea>
+        </div>
+
+        <div class="file-drop-area" id="fileDropArea">
+            <span>Drag and drop your .obj file here or click to select</span>
+            <input type="file" id="fileInput" name="model_file" accept=".obj" required>
+            <div class="file-select-btn">Choose File</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Model</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </form>
+</div>
+
+<script>
+    const fileDropArea = document.getElementById('fileDropArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileSelectBtn = document.querySelector('.file-select-btn');
+
+    fileDropArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileDropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        fileDropArea.classList.add('hover');
+    });
+
+    fileDropArea.addEventListener('dragleave', () => {
+        fileDropArea.classList.remove('hover');
+    });
+
+    fileDropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        fileDropArea.classList.remove('hover');
+        if (event.dataTransfer.files.length > 0) {
+            fileInput.files = event.dataTransfer.files;
+        }
+    });
+
+    fileSelectBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            fileDropArea.querySelector('span').textContent = fileInput.files[0].name;
+        }
+    });
+</script>
+{% endblock body %}

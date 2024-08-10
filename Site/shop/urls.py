@@ -18,4 +18,9 @@ urlpatterns = [
     path('service', views.service, name = 'service'),
     path('termandcondition', views.termandcondition, name = 'termandcondition'),
     path('dashboard', views.dashboard_view, name = 'dashboard'),
+    path('delete_model/<str:model_id>/', views.delete_model, name='delete_model'),
+    path('edit_model/<str:model_id>/', views.edit_model, name='edit_model'),
+    path('update_profile', views.update_profile, name='update_profile'),
+    path('add_model', views.add_model, name='add_model'),
+
 ]
